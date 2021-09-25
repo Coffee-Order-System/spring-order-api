@@ -183,4 +183,5 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+spring-gc-cafe.iml
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij,java,maven
