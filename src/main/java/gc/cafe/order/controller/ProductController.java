@@ -1,6 +1,8 @@
 package gc.cafe.order.controller;
 
+import gc.cafe.order.model.Product;
 import gc.cafe.order.service.ProductService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +22,11 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping(PRODUCTS)
-    public String productsPage() {
+    public String productsPage(Model model) {
+        List<ProductDto> productDtos = productService.getAllProducts().stream()
+                .map(ProductMapper::productToProductDto)
+                .toList();
+        model.addAttribute("products", productDtos);
         return "admin/products";
     }
 

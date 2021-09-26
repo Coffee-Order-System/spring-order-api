@@ -18,4 +18,8 @@ public class ProductDto {
 
     private String description;
 
+    private String createdAt;
+
+    private String updatedAt;
+
 }

@@ -11,27 +11,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gc.cafe.order.service.ProductService;
+import gc.cafe.order.common.BaseControllerTest;
+import gc.cafe.order.repository.ProductRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class ProductControllerTest {
+
+class ProductControllerTest extends BaseControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    ProductRepository productRepository;
 
-    @Autowired
-    ProductService productService;
+    @BeforeEach
+    void beforeEach() {
+        productRepository.deleteAll();
+    }
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Test
+    @DisplayName("제품 조회 페이지 요청")
+    void getProductsPage() throws Exception {
+        mockMvc.perform(get(ADMIN + PRODUCTS))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/products"))
+                .andExpect(model().attributeExists("products"));
+    }
 
     @Test
     @DisplayName("제품 등록 페이지 요청")

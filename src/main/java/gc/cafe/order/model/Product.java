@@ -2,6 +2,7 @@ package gc.cafe.order.model;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode(of = "productId")
 @ToString
+@AllArgsConstructor
 public class Product {
 
     private UUID productId;

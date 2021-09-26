@@ -3,6 +3,7 @@ package gc.cafe.order.service;
 import gc.cafe.order.model.Category;
 import gc.cafe.order.model.Product;
 import gc.cafe.order.repository.ProductRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,4 +22,7 @@ public class ProductService {
         productRepository.insert(product);
     }
 
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 }
