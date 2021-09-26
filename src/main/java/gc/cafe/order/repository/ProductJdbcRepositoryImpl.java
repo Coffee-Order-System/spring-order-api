@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -31,12 +34,28 @@ public class ProductJdbcRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> findAll() {
-        return jdbcTemplate.query("select * from products", productRowMapper);
+        return jdbcTemplate.query("SELECT * FROM products", productRowMapper);
     }
 
     @Override
     public void deleteAll() {
         jdbcTemplate.update("DELETE FROM products", Collections.emptyMap());
+    }
+
+    @Override
+    public void update(Product product) {
+        jdbcTemplate.update(
+                "UPDATE products SET product_name = :productName, category = :category, "
+                + "price = :price, description = :description, created_at = :createdAt, updated_at = :updatedAt "
+                + "WHERE product_id = UUID_TO_BIN(:productId)",
+                paramMap(product));
+    }
+
+    @Override
+    public Optional<Product> findById(UUID productId) {
+        List<Product> products = jdbcTemplate.query("select * from products where product_id = UUID_TO_BIN(:productId)",
+                Collections.singletonMap("productId", productId.toString().getBytes()), productRowMapper);
+        return Optional.ofNullable(DataAccessUtils.singleResult(products));
     }
 
     private Map<String, Object> paramMap(Product product) {

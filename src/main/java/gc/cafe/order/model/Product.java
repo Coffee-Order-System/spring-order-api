@@ -37,8 +37,16 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Product of(UUID productId, String productName, Long price, Category category, String description) {
+    public static Product of(UUID productId, String productName, Category category, Long price, String description) {
         Product product = new Product(productId, productName, category, price, description);
         return product;
+    }
+
+    public void update(String productName, Long price, Category category, String description) {
+        this.productName = productName;
+        this.price = price;
+        this.category = category;
+        this.description = description;
+        this.updatedAt = LocalDateTime.now();
     }
 }
