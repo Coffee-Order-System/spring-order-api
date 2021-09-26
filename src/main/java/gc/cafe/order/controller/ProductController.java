@@ -4,6 +4,7 @@ import gc.cafe.order.model.Product;
 import gc.cafe.order.service.ProductService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,13 @@ public class ProductController {
                 productDto.getCategory(),
                 productDto.getDescription());
         return "redirect:/admin/products";
+    }
+
+    @GetMapping(PRODUCTS + "/{productId}")
+    public String getProductPage(Model model, @PathVariable String productId) {
+        productService.getProduct(productId)
+                .ifPresent(product -> model.addAttribute("product", product));
+        return "admin/product";
     }
 
     @GetMapping(UPDATE_PRODUCT + "/{productId}")

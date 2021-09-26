@@ -17,17 +17,21 @@
                 <th>Product Name</th>
                 <th>Product Type</th>
                 <th>Price</th>
+                <th>Description</th>
                 <th>Created At</th>
+                <th>Updated At</th>
+                <th>수정</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="product : ${products}">
-                <td><a th:href="@{'/admin/products/' + ${product.productId}}" th:text="${product.productId}"></a></td>
+                <td th:text="${product.productId}"></a></td>
                 <td th:text="${product.productName}"></td>
                 <td th:text="${product.category}"></td>
                 <td th:text="${product.price}"></td>
+                <td th:text="${product.description}"></td>
                 <td th:text="${product.createdAt}"></td>
-            </tr>
+                <td th:text="${product.updatedAt}"></td>
+                <td><a class="btn btn-outline-primary" th:href="@{'/admin/update-product/' + ${product.productId}}">변경하기</a></td>
             </tbody>
         </table>
     </div>
