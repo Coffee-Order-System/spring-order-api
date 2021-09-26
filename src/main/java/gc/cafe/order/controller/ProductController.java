@@ -52,14 +52,14 @@ public class ProductController {
     @GetMapping(PRODUCTS + "/{productId}")
     public String getProductPage(Model model, @PathVariable String productId) {
         productService.getProduct(productId)
-                .ifPresent(product -> model.addAttribute("product", product));
+                .ifPresent(product -> model.addAttribute("product", ProductMapper.productToProductDto(product)));
         return "admin/product";
     }
 
     @GetMapping(UPDATE_PRODUCT + "/{productId}")
     public String updateProductPage(Model model, @PathVariable String productId) {
         productService.getProduct(productId)
-                .ifPresent(product -> model.addAttribute("product", product));
+                .ifPresent(product -> model.addAttribute("product", ProductMapper.productToProductDto(product)));
         return "admin/update-product";
     }
 
