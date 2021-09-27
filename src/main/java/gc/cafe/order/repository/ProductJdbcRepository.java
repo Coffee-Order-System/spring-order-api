@@ -17,11 +17,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProductJdbcRepositoryImpl implements ProductRepository {
+public class ProductJdbcRepository implements ProductRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public ProductJdbcRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    public ProductJdbcRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
