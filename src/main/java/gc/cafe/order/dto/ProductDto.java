@@ -1,4 +1,4 @@
-package gc.cafe.order.controller;
+package gc.cafe.order.dto;
 
 import gc.cafe.order.model.Category;
 import lombok.Getter;

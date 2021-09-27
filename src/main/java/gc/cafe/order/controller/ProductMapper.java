@@ -1,5 +1,6 @@
 package gc.cafe.order.controller;
 
+import gc.cafe.order.dto.ProductDto;
 import gc.cafe.order.model.Product;
 
 public interface ProductMapper {

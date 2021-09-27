@@ -1,10 +1,9 @@
 package gc.cafe.order.controller;
 
-import gc.cafe.order.model.Product;
+import gc.cafe.order.dto.ProductDto;
 import gc.cafe.order.service.ProductService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.Banner.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
