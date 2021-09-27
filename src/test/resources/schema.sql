@@ -1,28 +1,37 @@
-CREATE TABLE customers
+CREATE TABLE products
 (
-    customer_id   BINARY(16) PRIMARY KEY,
-    name          varchar(20) NOT NULL,
-    email         varchar(50) NOT NULL,
-    last_login_at datetime(6) DEFAULT NULL,
-    created_at    datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP (6),
-    CONSTRAINT unq_user_email UNIQUE (email)
+    product_id   BINARY(16) PRIMARY KEY,
+    product_name VARCHAR(50) NOT NULL,
+    category     VARCHAR(50) NOT NULL,
+    price        BIGINT      NOT NULL,
+    description  TEXT,
+    created_at   DATETIME(6) NOT NULL,
+    updated_at   DATETIME(6) NOT NULL
 );
 
-CREATE TABLE vouchers
+CREATE TABLE orders
 (
-    voucher_id   BINARY(16) PRIMARY KEY,
-    name         varchar(50) NOT NULL,
-    voucher_type ENUM('FIX', 'PERCENT') NOT NULL,
-    discount     int(4) NOT NULL,
-    created_at   datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP (6)
+    order_id     BINARY(16) PRIMARY KEY,
+    email        VARCHAR(255) NOT NULL,
+    address      VARCHAR(255) NOT NULL,
+    postcode     VARCHAR(12)  NOT NULL,
+    total_price  BIGINT       NOT NULL,
+    order_status VARCHAR(50)  NOT NULL,
+    created_at   DATETIME(6) NOT NULL,
+    updated_at   DATETIME(6) NOT NULL
 );
 
-CREATE TABLE wallets
+CREATE TABLE order_items
 (
-    wallet_id   BINARY(16) PRIMARY KEY,
-    customer_id BINARY(16),
-    voucher_id  BINARY(16),
-    created_at  datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP (6),
-    FOREIGN KEY (customer_id) REFERENCES customers (customer_id),
-    FOREIGN KEY (voucher_id) REFERENCES vouchers (voucher_id)
+    order_item_id BIGINT      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    order_id      BINARY(16) NOT NULL,
+    product_id    BINARY(16) NOT NULL,
+    category      VARCHAR(50) NOT NULL,
+    price         BIGINT      NOT NULL,
+    quantity      INT         NOT NULL,
+    created_at    DATETIME(6) NOT NULL,
+    updated_at    DATETIME(6) NOT NULL,
+    INDEX (order_id),
+    CONSTRAINT fk_order_items_to_order FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE,
+    CONSTRAINT fk_order_items_to_product FOREIGN KEY (product_id) REFERENCES products (product_id)
 );
