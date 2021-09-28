@@ -28,6 +28,18 @@ public class Order {
 
     private LocalDateTime updatedAt;
 
+    public Order(UUID orderId, Email email, String address, String postcode, Long totalPrice, OrderStatus orderStatus,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.orderId = orderId;
+        this.email = email;
+        this.address = address;
+        this.postcode = postcode;
+        this.totalPrice = totalPrice;
+        this.orderStatus = orderStatus;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     public static Order of(UUID orderId, Email email, String address, String postcode, List<OrderItem> orderItems) {
         return new Order(orderId, email, address, postcode, sumPrice(orderItems), orderItems,
                 OrderStatus.ACCEPTED, LocalDateTime.now(), LocalDateTime.now());
@@ -37,5 +49,9 @@ public class Order {
         return orderItems.stream()
                 .mapToLong(orderItem -> orderItem.price() * orderItem.quantity())
                 .sum();
+    }
+
+    public void changeOrderStatusToDelivery() {
+        this.orderStatus = OrderStatus.READY_FOR_DELIVERY;
     }
 }
