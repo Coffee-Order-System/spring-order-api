@@ -2,10 +2,13 @@ package gc.cafe.order.controller;
 
 import gc.cafe.order.dto.ProductDto;
 import gc.cafe.order.service.ProductService;
+import java.sql.ResultSet;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,12 +37,15 @@ public class ProductController {
 
     @GetMapping(NEW_PRODUCT)
     public String newProductPage(Model model) {
-        model.addAttribute("product", new ProductDto());
+        model.addAttribute(new ProductDto());
         return "admin/new-product";
     }
 
     @PostMapping(NEW_PRODUCT)
-    public String submitProduct(ProductDto productDto) {
+    public String submitProduct(@Valid ProductDto productDto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/new-product";
+        }
         productService.addProduct(
                 productDto.getProductName(),
                 productDto.getPrice(),
@@ -51,19 +57,22 @@ public class ProductController {
     @GetMapping(PRODUCTS + "/{productId}")
     public String getProductPage(Model model, @PathVariable String productId) {
         productService.getProduct(productId)
-                .ifPresent(product -> model.addAttribute("product", ProductMapper.productToProductDto(product)));
+                .ifPresent(product -> model.addAttribute(ProductMapper.productToProductDto(product)));
         return "admin/product";
     }
 
     @GetMapping(UPDATE_PRODUCT + "/{productId}")
     public String updateProductPage(Model model, @PathVariable String productId) {
         productService.getProduct(productId)
-                .ifPresent(product -> model.addAttribute("product", ProductMapper.productToProductDto(product)));
+                .ifPresent(product -> model.addAttribute(ProductMapper.productToProductDto(product)));
         return "admin/update-product";
     }
 
     @PostMapping(UPDATE_PRODUCT + "/{productId}")
-    public String updateProduct(@PathVariable String productId, ProductDto productDto) {
+    public String updateProduct(@PathVariable String productId, @Valid ProductDto productDto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/update-product";
+        }
         productService.updateProduct(productId,
                                 productDto.getProductName(),
                                 productDto.getPrice(),

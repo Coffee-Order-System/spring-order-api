@@ -73,6 +73,26 @@ class ProductControllerTest extends BaseControllerTest {
     }
 
     @Test
+    @DisplayName("제품 등록시 입력 오류")
+    void failAddProduct() throws Exception {
+        String productName = "이 이름은 스무글자가 넘는 이름입니다.";
+        String category = "COFFEE_BEAN_PACKAGE";
+        String price = "1000000000";
+        String description = "최상급 원두를 사용해 과일 잼과 오렌지 꽃의 산뜻한 향을 선사하는 프리미엄 원두입니다.";
+
+        mockMvc.perform(post(ADMIN + NEW_PRODUCT)
+                .param("productName", productName)
+                .param("category", category)
+                .param("price", price)
+                .param("description", description))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/new-product"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().errorCount(2));
+    }
+
+    @Test
     @DisplayName("제품 수정 페이지 요청")
     void updateProductPage() throws Exception {
         UUID productId = UUID.randomUUID();
@@ -116,6 +136,29 @@ class ProductControllerTest extends BaseControllerTest {
 
         assertThat(updateProduct.getProductName()).isEqualTo("에티오피아 원두 250g");
         assertThat(updateProduct.getPrice()).isEqualTo(20000L);
+    }
+
+    @Test
+    @DisplayName("제품 수정 요청")
+    void failUpdateProduct() throws Exception {
+        UUID productId = UUID.randomUUID();
+        String productName = "에티오피아 원두 200g";
+        Category category = Category.COFFEE_BEAN_PACKAGE;
+        Long price = 15000L;
+        String description = "최상급 원두를 사용해 과일 잼과 오렌지 꽃의 산뜻한 향을 선사하는 프리미엄 원두입니다.";
+
+        Product product = Product.of(productId, productName, category, price, description);
+        productRepository.insert(product);
+
+        mockMvc.perform(post(ADMIN + UPDATE_PRODUCT + "/{productId}", productId.toString())
+                .param("productName", "이 이름은 스무글자가 넘는 이름입니다.")
+                .param("category", category.name())
+                .param("price", "1000000000")
+                .param("description", description))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/update-product"))
+                .andExpect(model().errorCount(2));
     }
 
 }
