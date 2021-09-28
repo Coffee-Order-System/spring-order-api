@@ -3,7 +3,7 @@ package gc.cafe.order.dto;
 import gc.cafe.order.model.Category;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -14,11 +14,10 @@ public class ProductDto {
 
     private String productId;
 
-    @NotNull
+    @NotBlank
     @Length(min = 1, max = 20)
     private String productName;
 
-    @NotNull
     private Category category;
 
     @Min(100)

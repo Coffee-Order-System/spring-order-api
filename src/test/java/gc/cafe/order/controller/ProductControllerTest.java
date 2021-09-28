@@ -49,7 +49,7 @@ class ProductControllerTest extends BaseControllerTest {
     void newProductPage() throws Exception {
         mockMvc.perform(get(ADMIN + NEW_PRODUCT))
                 .andDo(print())
-                .andExpect(model().attributeExists("product"))
+                .andExpect(model().attributeExists("productDto"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/new-product"));
     }
@@ -107,7 +107,7 @@ class ProductControllerTest extends BaseControllerTest {
         mockMvc.perform(get(ADMIN + UPDATE_PRODUCT + "/{productId}", productId))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("product"))
+                .andExpect(model().attributeExists("productDto"))
                 .andExpect(view().name("admin/update-product"));
     }
 

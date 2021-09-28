@@ -25,7 +25,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="product : ${products}">
+            <tr th:each="product : ${productDtoList}">
                 <td><a th:href="@{'/admin/products/' + ${product.productId}}" th:text="${product.productId}"></a></td>
                 <td th:text="${product.productName}"></td>
                 <td th:text="${product.category}"></td>

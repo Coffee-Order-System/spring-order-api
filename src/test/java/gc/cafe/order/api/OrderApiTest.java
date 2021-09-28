@@ -73,4 +73,33 @@ class OrderApiTest extends BaseControllerTest {
                 .andExpect(jsonPath("$..category").exists());
 
     }
+
+    @Test
+    @DisplayName("올바르지 않은 이메일로 주문 등록 요청시 Bad Request")
+    void submitOrderFailByEmail() throws Exception {
+        UUID productId = UUID.randomUUID();
+        String productName = "에티오피아 원두 200g";
+        Category category = Category.COFFEE_BEAN_PACKAGE;
+        Long price = 15000L;
+        String description = "최상급 원두를 사용해 과일 잼과 오렌지 꽃의 산뜻한 향을 선사하는 프리미엄 원두입니다.";
+
+        Product product = Product.of(productId, productName, category, price, description);
+        productRepository.insert(product);
+
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(new OrderItem(productId, category, price, 2));
+
+        OrderDto orderDto = new OrderDto();
+        orderDto.setEmail("t@t");
+        orderDto.setAddress("서울시 중구");
+        orderDto.setPostcode("11011");
+        orderDto.setOrderItems(orderItems);
+
+        mockMvc.perform(post(PREFIX + ORDERS)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(orderDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+    }
 }
