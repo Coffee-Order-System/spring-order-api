@@ -24,14 +24,14 @@
             </tr>
             </thead>
             <tbody>
-                <td th:text="${product.productId}"></a></td>
-                <td th:text="${product.productName}"></td>
-                <td th:text="${product.category}"></td>
-                <td th:text="${product.price}"></td>
-                <td th:text="${product.description}"></td>
-                <td th:text="${product.createdAt}"></td>
-                <td th:text="${product.updatedAt}"></td>
-                <td><a class="btn btn-outline-primary" th:href="@{'/admin/update-product/' + ${product.productId}}">변경하기</a></td>
+                <td th:text="${productDto.productId}"></a></td>
+                <td th:text="${productDto.productName}"></td>
+                <td th:text="${productDto.category}"></td>
+                <td th:text="${productDto.price}"></td>
+                <td th:text="${productDto.description}"></td>
+                <td th:text="${productDto.createdAt}"></td>
+                <td th:text="${productDto.updatedAt}"></td>
+                <td><a class="btn btn-outline-primary" th:href="@{'/admin/update-product/' + ${productDto.productId}}">변경하기</a></td>
             </tbody>
         </table>
     </div>
