@@ -1,4 +1,4 @@
-package gc.cafe.order.controller;
+package gc.cafe.order.mapper;
 
 import gc.cafe.order.dto.ProductDto;
 import gc.cafe.order.model.Product;

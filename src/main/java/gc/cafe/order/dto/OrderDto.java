@@ -1,5 +1,6 @@
 package gc.cafe.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import gc.cafe.order.model.OrderItem;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -22,5 +23,7 @@ public class OrderDto {
     private String postcode;
 
     private List<OrderItem> orderItems;
+
+    private Long totalPrice;
 
 }

@@ -54,4 +54,15 @@ public class Order {
     public void changeOrderStatusToDelivery() {
         this.orderStatus = OrderStatus.READY_FOR_DELIVERY;
     }
+
+    public void addOrderItems(List<OrderItem> orderItems) {
+        orderItems.forEach(orderItem -> {
+            this.orderItems.add(orderItem);
+            this.totalPrice += orderItem.price() * orderItem.quantity();
+        });
+    }
+
+    public void registerOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 }

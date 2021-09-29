@@ -4,6 +4,7 @@ import static gc.cafe.order.api.OrderApi.PREFIX;
 
 import gc.cafe.order.dto.OrderDto;
 import gc.cafe.order.exception.BadRequestException;
+import gc.cafe.order.mapper.OrderMapper;
 import gc.cafe.order.model.Order;
 import gc.cafe.order.service.OrderService;
 import java.net.URI;
@@ -31,11 +32,12 @@ public class OrderApi {
         if (result.hasErrors()) {
             throw new BadRequestException(result.getFieldError().getDefaultMessage());
         }
+
         Order order = orderService.addOrder(
                 orderDto.getEmail(),
                 orderDto.getAddress(),
                 orderDto.getPostcode(),
                 orderDto.getOrderItems());
-        return ResponseEntity.created(URI.create(PREFIX + ORDERS)).body(order);
+        return ResponseEntity.created(URI.create(PREFIX + ORDERS)).body(OrderMapper.orderToOrderDto(order));
     }
 }

@@ -2,7 +2,7 @@ package gc.cafe.order.api;
 
 import static gc.cafe.order.api.ProductApi.PREFIX;
 
-import gc.cafe.order.controller.ProductMapper;
+import gc.cafe.order.mapper.ProductMapper;
 import gc.cafe.order.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

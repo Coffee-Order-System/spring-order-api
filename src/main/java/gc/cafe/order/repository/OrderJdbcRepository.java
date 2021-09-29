@@ -3,6 +3,7 @@ package gc.cafe.order.repository;
 import static gc.cafe.order.repository.JdbcUtils.toLocalDateTime;
 import static gc.cafe.order.repository.JdbcUtils.toUUID;
 
+import gc.cafe.order.model.Category;
 import gc.cafe.order.model.Email;
 import gc.cafe.order.model.Order;
 import gc.cafe.order.model.OrderItem;
@@ -12,8 +13,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,7 +27,6 @@ import org.springframework.stereotype.Repository;
 public class OrderJdbcRepository implements OrderRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-
     @Override
     public void insert(Order order) {
         jdbcTemplate.update("INSERT INTO orders (order_id, email, address, postcode, total_price, order_status, created_at, updated_at) "
@@ -53,6 +55,36 @@ public class OrderJdbcRepository implements OrderRepository {
                 orderRowMapper);
     }
 
+    @Override
+    public Optional<Order> findByEmailAndOrderStatus(Email email, OrderStatus orderStatus) {
+        List<Order> orders = jdbcTemplate.query("SELECT * FROM orders WHERE email = :email AND order_status = :orderStatus",
+                toEmailAndOrderStatusMap(email, orderStatus),
+                orderRowMapper);
+        Order order = DataAccessUtils.singleResult(orders);
+        List<OrderItem> orderItems = jdbcTemplate.query("SELECT * FROM order_items WHERE order_id = UUID_TO_BIN(:orderId)",
+                new MapSqlParameterSource("orderId", order.getOrderId().toString()),
+                orderItemRowMapper);
+
+        order.registerOrderItems(orderItems);
+        return Optional.ofNullable(order);
+    }
+
+    @Override
+    public void insertOrderItem(Order order, List<OrderItem> orderItems) {
+        jdbcTemplate.update("UPDATE orders SET total_price = :totalPrice WHERE order_id = UUID_TO_BIN(:orderId)",
+                totalPriceParamMap(order));
+
+        orderItems.forEach(orderItem -> jdbcTemplate
+                .update("INSERT INTO order_items (order_id, product_id, category, price, quantity, created_at, updated_at) "
+                        + "VALUES(UUID_TO_BIN(:orderId), UUID_TO_BIN(:productId), :category, :price, :quantity, :createdAt, :updatedAt)",
+                        toOrderItemParamMap(order.getOrderId(), orderItem, LocalDateTime.now(), LocalDateTime.now())));
+    }
+
+    @Override
+    public List<Order> findAll() {
+        return jdbcTemplate.query("SELECT * FROM orders", orderRowMapper);
+    }
+
     private Map<String, Object> toOrderParamMap(Order order) {
         Map<String, Object> map = new HashMap<>();
         map.put("orderId", order.getOrderId().toString().getBytes());
@@ -66,7 +98,7 @@ public class OrderJdbcRepository implements OrderRepository {
         return map;
     }
 
-    private Map<String, Object> toOrderItemParamMap(UUID orderId,  OrderItem orderItem,  LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Map<String, Object> toOrderItemParamMap(UUID orderId, OrderItem orderItem, LocalDateTime createdAt, LocalDateTime updatedAt) {
         Map<String, Object> map = new HashMap<>();
         map.put("orderId", orderId.toString().getBytes());
         map.put("productId", orderItem.productId().toString().getBytes());
@@ -78,6 +110,21 @@ public class OrderJdbcRepository implements OrderRepository {
         return map;
     }
 
+    private Map<String, Object> toEmailAndOrderStatusMap(Email email, OrderStatus orderStatus) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("email", email.address());
+        map.put("orderStatus", orderStatus.toString());
+        return map;
+    }
+
+    private Map<String, Object> totalPriceParamMap(Order order) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", order.getOrderId().toString());
+        map.put("totalPrice", order.getTotalPrice());
+        return map;
+    }
+
+
     private static final RowMapper<Order> orderRowMapper = (resultSet, i) -> {
         var orderId = toUUID(resultSet.getBytes("order_id"));
         var email = resultSet.getString("email");
@@ -88,5 +135,13 @@ public class OrderJdbcRepository implements OrderRepository {
         var createdAt = toLocalDateTime(resultSet.getTimestamp("created_at"));
         var updatedAt = toLocalDateTime(resultSet.getTimestamp("updated_at"));
         return new Order(orderId, new Email(email), address, postcode, totalPrice, OrderStatus.valueOf(orderStatus), createdAt, updatedAt);
+    };
+
+    private static final RowMapper<OrderItem> orderItemRowMapper = (resultSet, i) -> {
+        UUID productId = toUUID(resultSet.getBytes("product_id"));
+        Category category = Category.valueOf(resultSet.getString("category"));
+        Long price = resultSet.getLong("price");
+        Integer quantity = resultSet.getInt("quantity");
+        return new OrderItem(productId, category, price, quantity);
     };
 }
